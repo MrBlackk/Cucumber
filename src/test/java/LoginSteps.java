@@ -3,19 +3,21 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import pages.HomePage;
+import pages.LoginPage;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by chv on 16.02.2017.
  * Login Steps
  */
 public class LoginSteps {
-
-    WebDriver driver;
+    private LoginPage loginPage;
+    private HomePage homePage;
+    private WebDriver driver;
 
     static {
         try {
@@ -25,21 +27,20 @@ public class LoginSteps {
         }
     }
 
-    @Given("^the Github Sign In page$")
-    public void the_Github_Sign_In_page() throws Throwable {
-        driver.get("https://github.com/login");
+    @Given("^the Github Login page$")
+    public void the_Github_Login_page() throws Throwable {
+        loginPage = new LoginPage(driver);
+        loginPage.navigateToSignInPage();
     }
 
     @When("^logging in as an user$")
     public void logging_in_as_an_user() throws Throwable {
-        driver.findElement(By.id("login_field")).sendKeys("");
-        driver.findElement(By.id("password")).sendKeys("");
-        driver.findElement(By.name("commit")).submit();
+        homePage = loginPage.loginAsUser();
     }
 
     @Then("^the home page navigation is available$")
     public void the_home_page_navigation_is_available() throws Throwable {
-        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("header")));
+        assertTrue("Navigation is absent", homePage.checkForNavigation());
     }
 
     @Before
